@@ -6,11 +6,17 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "swagger": "node ./docs/swagger.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "build": "echo \"No build script\" && exit 1"
   },
-  "keywords": ["mern", "shop", "backend", "express"],
+  "keywords": [
+    "mern",
+    "shop",
+    "backend",
+    "express"
+  ],
   "author": "Your Name",
   "license": "ISC",
   "dependencies": {
@@ -18,11 +24,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase": "^11.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "multer": "^1.4.5-lts.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "eslint": "^8.27.0",
     "nodemon": "^2.0.20",
-    "eslint": "^8.27.0"
+    "swagger-autogen": "^2.23.7"
   }
 }
