@@ -6,9 +6,8 @@ const doc = {
     title: "SE Shop REST API", // by default: 'REST API'
     description: "RESTful API for SE Shop", // by default: '',
     contact: {
-      name: "Worachet Uttha",
-      url: "https://pws.npru.ac.th/wuttha",
-      email: "wuttha@webmail.npru.ac.th",
+      name: "Prempree Deelert",
+      email: "654259007@webmail.npru.ac.th",
     },
   },
   servers: [

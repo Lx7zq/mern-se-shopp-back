@@ -5,9 +5,8 @@
     "title": "SE Shop REST API",
     "description": "RESTful API for SE Shop",
     "contact": {
-      "name": "Worachet Uttha",
-      "url": "https://pws.npru.ac.th/wuttha",
-      "email": "wuttha@webmail.npru.ac.th"
+      "name": "Prempree Deelert",
+      "email": "654259007@webmail.npru.ac.th"
     }
   },
   "servers": [
@@ -24,128 +23,89 @@
     {
       "name": "Product",
       "description": "API For Product Object"
+    },
+    {
+      "name": "Cart",
+      "description": "API For Cart Object"
     }
   ],
   "paths": {
-    "/": {
+    "/carts": {
       "get": {
-        "description": "",
+        "tags": ["Cart"],
+        "summary": "Return the list of all cart items",
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/v1/product/": {
-      "post": {
-        "tags": [
-          "Product"
-        ],
-        "summary": "Create a new product",
-        "description": "Endpoint to create a new product",
-        "parameters": [
-          {
-            "name": "file",
-            "in": "formData",
-            "required": true,
-            "description": "Image to upload to Firebase Storage and get its url",
-            "schema": {
-              "type": "file"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
+            "description": "List of all cart items"
           },
           "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#components/schemas/NewProduct"
-              }
-            }
+            "description": "Cart not found"
           }
         }
       },
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/v1/product/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+      "post": {
+        "tags": ["Cart"],
+        "summary": "Add a cart item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCart"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Item added to cart"
           },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "400": {
+            "description": "Invalid request"
           }
         }
       },
       "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Cart"],
+        "summary": "Remove all cart items",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "All cart items removed"
           },
           "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+            "description": "Cart not found"
           }
         }
-      },
+      }
+    },
+    "/carts/{email}": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "Return the list of all cart items by email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of cart items for the user"
+          },
+          "404": {
+            "description": "Cart not found"
+          }
+        }
+      }
+    },
+    "/carts/{id}": {
       "put": {
-        "description": "",
+        "tags": ["Cart"],
+        "summary": "Update a cart item",
         "parameters": [
           {
             "name": "id",
@@ -156,44 +116,44 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "example": "any"
-                  },
-                  "description": {
-                    "example": "any"
-                  },
-                  "price": {
-                    "example": "any"
-                  },
-                  "image": {
-                    "example": "any"
-                  },
-                  "category": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/UpdateCartItem"
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cart item updated"
+          },
+          "404": {
+            "description": "Cart item not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Cart"],
+        "summary": "Remove a cart item by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart item removed"
+          },
+          "404": {
+            "description": "Cart item not found"
           }
         }
       }
@@ -201,108 +161,29 @@
   },
   "components": {
     "schemas": {
-      "Product": {
+      "AddToCart": {
         "type": "object",
         "properties": {
-          "type": {
+          "productId": {
             "type": "string",
-            "example": "object"
+            "example": "61a8c2b4fbd1d5c3b4f8bdbb"
           },
-          "properties": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  }
-                }
-              },
-              "category": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  }
-                }
-              },
-              "description": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  }
-                }
-              },
-              "image": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  }
-                }
-              },
-              "price": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "number"
-                  }
-                }
-              }
-            }
+          "quantity": {
+            "type": "integer",
+            "example": 2
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
           }
         }
       },
-      "NewProduct": {
+      "UpdateCartItem": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "example": "Mechanical Keyboard"
-          },
-          "description": {
-            "type": "string",
-            "example": "A mechanical keyboard with RGB lighting"
-          },
-          "price": {
-            "type": "number",
-            "example": 100
-          },
-          "category": {
-            "type": "string",
-            "example": "gadget"
-          }
-        }
-      },
-      "ProductResponse": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Mechanical Keyboard"
-          },
-          "description": {
-            "type": "string",
-            "example": "A mechanical keyboard with RGB lighting"
-          },
-          "image": {
-            "type": "string",
-            "example": "https://firebasestorage.googleapis.com/v0/b/component-431e1.firebasestorage.app/o/se-shop%2Fupload%2F71fRP7KY9hL._AC_SL1500_.jpg?alt=media&token=f63134ce-67a9-4dda-af12-c6d54b70fdc3"
-          },
-          "price": {
-            "type": "number",
-            "example": 100
-          },
-          "category": {
-            "type": "string",
-            "example": "gadget"
+          "quantity": {
+            "type": "integer",
+            "example": 3
           }
         }
       }
