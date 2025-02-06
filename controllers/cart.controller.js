@@ -145,7 +145,7 @@ exports.deleteCartById = async (req, res) => {
     if (!item) {
       return res.status(404).json({ message: "Item not found!" });
     }
-    res.json({ message: "Item deleted successfully!" });
+    res.status(200).json({ message: "Item deleted successfully!" });
   } catch (error) {
     res
       .status(500)
