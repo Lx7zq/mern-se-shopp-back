@@ -4,41 +4,14 @@ require("dotenv").config();
 const secret = process.env.SECRET;
 
 exports.createProduct = async (req, res) => {
-  /** 
-    #swagger.tags = ['Product']
-    #swagger.summary = "Create a new product"
-    #swagger.description = 'Endpoint to create a new product'
-    #swagger.consumes = ['multipart/form-data']
-    #swagger.parameters['file'] = {
-       in:'formData',
-       type:'file',
-       required:true,
-       description:'Image to upload to Firebase Storage and get its url'
-    }
-    #swagger.requestBody = {
-       required:true,
-       content:{
-         "multipart/form-data":{
-           schema:{
-             $ref:"#components/schemas/NewProduct"
-           }
-         }
-       }
-    }
-    #swagger.response[200] = {
-       schema:{ "$ref": "#components/schemas/ProductResponse"},
-       description: "Product created successfully"
-    }
-*/
-
   if (!req.file) {
     return res.status(400).json({ message: "Image is required" });
   }
-  const firebaseUrl = req.file?.firebaseUrl;
-  const { name, description, price, image, category } = req.body;
+  const firebaseUrl = req.file?.firebaseUrl; // ต้องดึง URL จากไฟล์ที่ถูกอัปโหลดไปยัง Firebase
+  const { name, description, price, category } = req.body;
 
   // Validate input fields
-  if (!name || !description || !price || !image || !category) {
+  if (!name || !description || !price || !category) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -48,7 +21,7 @@ exports.createProduct = async (req, res) => {
       name,
       description,
       price,
-      image: firebaseUrl,
+      image: firebaseUrl, // ใช้ URL ที่ได้จาก Firebase
       category,
     });
 
@@ -58,8 +31,9 @@ exports.createProduct = async (req, res) => {
       });
     }
 
-    res.json(productDoc);
+    res.json(productDoc); // ส่งผลลัพธ์ของสินค้าที่ถูกสร้างไป
   } catch (error) {
+    console.error("Database error:", error); // Log detailed error
     res
       .status(500)
       .json({ message: "Error creating product", error: error.message });
