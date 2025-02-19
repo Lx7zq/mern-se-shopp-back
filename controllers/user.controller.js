@@ -5,79 +5,56 @@ const salt = bcrypt.genSaltSync(10);
 require("dotenv").config();
 const secret = process.env.SECRET;
 
-exports.register = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    res.status(400).send({
-      message: "Please provide all required fields!",
-    });
-    return;
-  }
-
+exports.sign = async (req, res) => {
   try {
-    const hashedPassword = bcrypt.hashSync(password, salt);
-    const user = await UserModel.create({
-      username,
-      password: hashedPassword,
-    });
-    res.send({
-      message: "User registered successfully",
-      user,
-    });
+    const { email } = req.body;
+    // 1. ตรวจสอบว่าได้ส่ง email มาหรือไม่
+    if (!email) {
+      return res.status(400).json({ message: "Email is required!" });
+    }
+    // 2. ค้นหา email ในฐานข้อมูล
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email is not found!" });
+    }
+    // 3. สร้าง JWT token
+    const token = jwt.sign(
+      { email: user.email, role: user.role },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
+    const userInfo = { token, email: user.email, role: user.role };
+    res.status(200).json({ userInfo });
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message ||
-        "Something error occurred while registering a new user",
-    });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
-exports.login = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    res.status(400).send({
-      message: "Please provide all required fields!",
-    });
-    return;
+exports.addUser = async (req, res) => {
+  const { email } = req.body;
+  // 1. ตรวจสอบว่าได้ส่ง email มาหรือไม่
+  if (!email) {
+    return res.status(400).json({ message: "Email is required!" });
   }
 
   try {
-    const userDoc = await UserModel.findOne({ username });
-    if (!userDoc) {
-      res.status(404).send({
-        message: "User not found",
-      });
-      return;
-    }
-    const isPasswordMatched = await bcrypt.compare(password, userDoc.password);
-    if (!isPasswordMatched) {
-      res.status(401).send({
-        message: "Invalid credentials",
-      });
-      return;
+    // 2. ตรวจสอบว่า email มีอยู่ในระบบแล้วหรือไม่
+    const existedUser = await UserModel.findOne({ email });
+
+    if (existedUser) {
+      return res.status(409).json({ message: "Email already exists!" });
     }
 
-    //login success
-    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-      if (err) {
-        return res.status(500).send({
-          message: "Internal server error: Authentication Failed!",
-        });
-      }
+    // 3. เพิ่มผู้ใช้ใหม่
+    const user = new UserModel({ email });
+    await user.save();
 
-      //token generated
-      res.send({
-        message: "User logged in successfully",
-        id: userDoc._id,
-        username,
-        accessToken: token,
-      });
-    });
+    res.status(201).json({ message: "User created successfully!", user });
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Something error occurred while logging in user",
-    });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
