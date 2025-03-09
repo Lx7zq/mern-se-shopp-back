@@ -132,7 +132,8 @@ const createOrder = async (customer, data) => {
   }
 };
 exports.webhook = async (req, res) => {
-  console.log("webhook is called!");
+  console.log("test");
+
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
   console.log(endpointSecret);
   const sig = req.headers["stripe-signature"];

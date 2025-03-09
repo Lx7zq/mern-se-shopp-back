@@ -18,13 +18,13 @@ router.delete(
   authJwt.verifyToken,
   authJwt.isAdmin,
   userController.deleteUser
-);
-router.patch(
+); router.patch(
   "/admin/:email",
   authJwt.verifyToken,
   authJwt.isAdmin,
   userController.makeAdmin
 );
+
 router.patch(
   "/user/:email",
   authJwt.verifyToken,
