@@ -24,9 +24,7 @@ try {
 
 app.use(cors({
   origin: [BASE_URL, 'https://mern-se-shopp-back.onrender.com'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 //stripe web hook must use raw
 app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
