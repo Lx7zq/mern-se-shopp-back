@@ -22,7 +22,7 @@ try {
   console.log("DB Connection Failed");
 }
 
-app.use(cors({ origin: BASE_URL, credentials: true }));
+app.use(cors({ origin: BASE_URL, 'https://mern-se-shopp-front.vercel.app', credentials: true }));
 //stripe web hook must use raw
 app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
