@@ -23,7 +23,7 @@ try {
 }
 
 app.use(cors({
-  origin: [BASE_URL, 'https://mern-se-shopp-back.onrender.com'],
+  origin: [BASE_URL, 'https://mern-se-shopp-back.onrender.com', 'https://mern-se-shopp-front.vercel.app'],
   credentials: true
 }));
 //stripe web hook must use raw
